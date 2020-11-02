@@ -25,17 +25,6 @@ db.once("open", () => {
   console.log("Connection established with Database");
 });
 
-// routes
-app.post("/estimateServer", (req, res) => {
-  res.status(200).send("Data recieved");
-  const newBuild = {
-    budget: req.body.budget,
-    games: req.body.games,
-    extras: req.body.extras,
-  };
-  console.log(newBuild);
-});
-
 // Logic
 function check_and_update(mongoose_doc, build_id) {
   var query = { id: build_id };
@@ -47,6 +36,40 @@ function check_and_update(mongoose_doc, build_id) {
 
 const builds_array = [value, streaming];
 builds_array.map((build) => check_and_update(build, build.build_id));
+
+function get_build(build_id) {
+  return build.find({ build_id: build_id }, (err, result) => {
+    if (err) {
+      console.log("ERROR: " + err);
+    } else {
+      return result;
+    }
+  });
+}
+
+// routes
+app.post("/estimateServer", (req, res) => {
+  res.status(200).send("Data recieved");
+  const newBuild = {
+    budget: req.body.budget,
+    games: req.body.games,
+    extras: req.body.extras,
+  };
+  console.log(newBuild);
+});
+
+app.get("/build_list", function(req, res) {
+  build.find({}, function(err, builds) {
+    var buildMap = {};
+
+    builds.forEach((build) => {
+      buildMap[build._id] = build;
+    });
+    res.send(buildMap);  
+  });
+});
+
+
 
 // listener
 app.listen(PORT, () => {
