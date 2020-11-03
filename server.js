@@ -14,7 +14,7 @@ mongoose.connect(config.buildsDBurl, {
   useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: true,
+  useFindAndModify: false,
 });
 const db = mongoose.connection;
 
@@ -45,7 +45,6 @@ app.post("/estimateServer", (req, res) => {
     games: req.body.games,
     extras: req.body.extras,
   };
-  console.log(newBuild);
 });
 
 app.get("/builds_list", (req, res) => {
@@ -60,9 +59,11 @@ app.get("/builds_list", (req, res) => {
 });
 
 app.get("/build_details", async (req, res) => {
-  res
-    .status(200)
-    .send(await build.find({ build_id: req.query.build_id }).exec());
+  let details = await build.find({ build_id: req.query.build_id }).exec();
+  details = details[0];
+  delete details["__v"];
+  delete details["_id"];
+  res.status(200).send(details);
 });
 
 // listener

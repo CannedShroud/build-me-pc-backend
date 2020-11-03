@@ -103,9 +103,9 @@ const buildSchema = mongoose.Schema({
   benchmarks: [benchmarkSchema],
   case: caseSchema,
   gpu: gpuSchema,
-  psu: psuSchema,
   storage: [ssdSchema],
   build_id: String,
+  psu: psuSchema,
   id: String,
 });
 
